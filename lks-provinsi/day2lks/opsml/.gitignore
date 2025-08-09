@@ -1,0 +1,11 @@
+.env
+venv/
+__pycache__/
+*.pyc
+
+app.py_
+cobasns.py
+templates/input_token.html
+templates/index_.html
+
+.dockerfile

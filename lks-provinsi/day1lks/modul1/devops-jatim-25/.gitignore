@@ -1,0 +1,27 @@
+.env
+*.env
+.env*
+*.env*
+!sample.env
+
+# JS
+node_modules
+
+# Go
+/vendor
+
+# IDE
+*.iml
+.idea
+.vscode
+
+# OS
+.DS_Store
+
+# Misc
+*.db
+*.db-shm
+*.db-wal
+cache/
+build/
+

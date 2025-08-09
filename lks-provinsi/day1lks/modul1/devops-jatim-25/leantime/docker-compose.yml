@@ -1,0 +1,38 @@
+version: "3.3"
+
+services:
+  leantime_db:
+    image: mysql:8.4
+    container_name: mysql_leantime
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+    env_file: ./.env
+    networks:
+      - leantime-net
+    command: --character-set-server=UTF8MB4 --collation-server=UTF8MB4_unicode_ci
+
+  leantime:
+    image: leantime/leantime:latest
+    container_name: leantime
+    restart: unless-stopped
+    env_file: ./.env
+    networks:
+      - leantime-net
+    volumes:
+      - public_userfiles:/var/www/html/public/userfiles
+      - userfiles:/var/www/html/userfiles
+      - plugins:/var/www/html/app/Plugins
+    ports:
+      - "8080"
+    depends_on:
+      - leantime_db
+
+volumes:
+  db_data:
+  userfiles:
+  public_userfiles:
+  plugins:
+
+networks:
+  leantime-net:

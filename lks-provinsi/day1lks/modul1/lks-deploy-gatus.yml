@@ -1,0 +1,44 @@
+name: Gatus' Job (2/2) - Deploy Gatus
+
+# FILL THE MISSING VALUES BELOW
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: lks-gatus
+  ECS_CLUSTER: lks-oss-cluster
+  TOKEN: ${{ secrets.TOKEN }}
+
+  ECS_GATUS_SERVICE: gatus-service
+  GATUS_TASK_DEFINITION: /gatus/task-definition.json
+  GATUS_URL: "https://${{ secrets.ALB_ENDPOINT }}:8080"
+# FILL THE MISSING VALUES ABOVE
+
+permissions:
+  contents: read
+
+jobs:
+  deploy_gatus:
+    name: Deploy Gatus App
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      # add build steps here
+
+      - name: Update ECS task definition
+        run: |
+          sed -i "s|<task-def-image>|$IMAGE_FULL_URI|g" $GATUS_TASK_DEFINITION
+          echo "Task definition updated."
+          cat $GATUS_TASK_DEFINITION
+
+      - name: deploy ecs task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ env.gatus_task_definition }}
+          service: ${{ env.ecs_gatus_service }}
+          cluster: ${{ env.ecs_cluster }}
+          force-new-deployment: true
+          run-task-tags: '[{"key": "", "value": ""} , ...]'
