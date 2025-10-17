@@ -1,6 +1,7 @@
 resource "aws_vpc" "techno_hida" {
-  cidr_block       = "25.1.0.0/16"
-  instance_tenancy = "default"
+  cidr_block                     = "25.1.0.0/16"
+  assign_generated_ipv6_cidr_block = true
+  instance_tenancy               = "default"
 
   tags = {
     Name = "techno-hida"
@@ -8,10 +9,12 @@ resource "aws_vpc" "techno_hida" {
 }
 
 resource "aws_subnet" "techno_public_subnet_a" {
-  vpc_id                  = aws_vpc.techno_hida.id
-  cidr_block              = "25.1.0.0/24"
-  availability_zone       = "us-east-1a"
-  map_public_ip_on_launch = true
+  vpc_id                          = aws_vpc.techno_hida.id
+  cidr_block                      = "25.1.0.0/24"
+  ipv6_cidr_block                 = cidrsubnet(aws_vpc.techno_hida.ipv6_cidr_block, 8, 0)
+  availability_zone               = "us-east-1a"
+  map_public_ip_on_launch         = true
+  assign_ipv6_address_on_creation = true
 
   tags = {
     Name = "techno-public-subnet-az-a"
@@ -19,10 +22,12 @@ resource "aws_subnet" "techno_public_subnet_a" {
 }
 
 resource "aws_subnet" "techno_public_subnet_b" {
-  vpc_id                  = aws_vpc.techno_hida.id
-  cidr_block              = "25.1.2.0/24"
-  availability_zone       = "us-east-1b"
-  map_public_ip_on_launch = true
+  vpc_id                          = aws_vpc.techno_hida.id
+  cidr_block                      = "25.1.2.0/24"
+  ipv6_cidr_block                 = cidrsubnet(aws_vpc.techno_hida.ipv6_cidr_block, 8, 1)
+  availability_zone               = "us-east-1b"
+  map_public_ip_on_launch         = true
+  assign_ipv6_address_on_creation = true
 
   tags = {
     Name = "techno-public-subnet-az-b"
@@ -30,9 +35,11 @@ resource "aws_subnet" "techno_public_subnet_b" {
 }
 
 resource "aws_subnet" "techno_private_subnet_a" {
-  vpc_id            = aws_vpc.techno_hida.id
-  cidr_block        = "25.1.1.0/24"
-  availability_zone = "us-east-1a"
+  vpc_id                          = aws_vpc.techno_hida.id
+  cidr_block                      = "25.1.1.0/24"
+  ipv6_cidr_block                 = cidrsubnet(aws_vpc.techno_hida.ipv6_cidr_block, 8, 2)
+  availability_zone               = "us-east-1a"
+  assign_ipv6_address_on_creation = true
 
   tags = {
     Name = "techno-private-subnet-az-a"
@@ -40,9 +47,11 @@ resource "aws_subnet" "techno_private_subnet_a" {
 }
 
 resource "aws_subnet" "techno_private_subnet_b" {
-  vpc_id            = aws_vpc.techno_hida.id
-  cidr_block        = "25.1.3.0/24"
-  availability_zone = "us-east-1b"
+  vpc_id                          = aws_vpc.techno_hida.id
+  cidr_block                      = "25.1.3.0/24"
+  ipv6_cidr_block                 = cidrsubnet(aws_vpc.techno_hida.ipv6_cidr_block, 8, 3)
+  availability_zone               = "us-east-1b"
+  assign_ipv6_address_on_creation = true
 
   tags = {
     Name = "techno-private-subnet-az-b"
@@ -58,6 +67,8 @@ resource "aws_internet_gateway" "techno_gw" {
 }
 
 resource "aws_eip" "techno_eip" {
+  domain = "vpc"
+
   tags = {
     Name = "techno-eip"
   }
@@ -66,6 +77,10 @@ resource "aws_eip" "techno_eip" {
 resource "aws_nat_gateway" "techno_nat" {
   allocation_id = aws_eip.techno_eip.id
   subnet_id     = aws_subnet.techno_public_subnet_a.id
+
+  tags = {
+    Name = "techno-nat"
+  }
 }
 
 resource "aws_route_table" "techno_public_rtb" {
@@ -74,6 +89,11 @@ resource "aws_route_table" "techno_public_rtb" {
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.techno_gw.id
+  }
+
+  route {
+    ipv6_cidr_block = "::/0"
+    gateway_id      = aws_internet_gateway.techno_gw.id
   }
 
   tags = {
@@ -87,6 +107,11 @@ resource "aws_route_table" "techno_private_rtb" {
   route {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.techno_nat.id
+  }
+
+  route {
+    ipv6_cidr_block = "::/0"
+    gateway_id      = aws_internet_gateway.techno_gw.id
   }
 
   tags = {
