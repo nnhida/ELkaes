@@ -59,7 +59,7 @@ resource "aws_lambda_permission" "allow_api_gateway_post" {
   action        = "lambda:InvokeFunction"
   function_name = "techno-lambda-post"
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "arn:aws:execute-api:us-east-1:641191776011:qbat8qvzjb/*/POST/generate-token"
+  source_arn    = "arn:aws:execute-api:us-east-1:641191776011:d44qq6u6t0/*/POST/generate-token"
 }
 
 resource "aws_lambda_permission" "allow_api_gateway_get" {
@@ -67,7 +67,7 @@ resource "aws_lambda_permission" "allow_api_gateway_get" {
   action        = "lambda:InvokeFunction"
   function_name = "techno-lambda-get"
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "arn:aws:execute-api:us-east-1:641191776011:qbat8qvzjb/*/GET/validate-token"
+  source_arn    = "arn:aws:execute-api:us-east-1:641191776011:d44qq6u6t0/*/GET/validate-token"
 }
 
 resource "aws_api_gateway_deployment" "techno_api_deploy" {

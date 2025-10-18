@@ -8,7 +8,7 @@ resource "aws_lambda_function" "lambda_s3" {
 
   environment {
     variables = {
-      SNS_TOPIC_ARN = aws_sns_topic.techno_topic.name
+      SNS_TOPIC_ARN = aws_sns_topic.techno_topic.arn
       KINESIS_STREAM_NAME = aws_kinesis_stream.techno_kinesis_hida.name
       DEST_BUCKET = aws_s3_bucket.technooutput_hida.bucket
     }

@@ -57,9 +57,9 @@ def dashboard():
     try:
         sns_client = boto3.client('sns', 
         region_name='us-east-1',
-        aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
-        aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
-        aws_session_token=os.environ.get("AWS_SESSION_TOKEN")
+        aws_access_key_id=os.environ.get("aws_access_key_id"),
+        aws_secret_access_key=os.environ.get("aws_secret_access_key"),
+        aws_session_token=os.environ.get("aws_session_token")
         )
         topic_arn = os.environ.get("SNS_TOPIC_ARN")
         
@@ -77,9 +77,9 @@ def dashboard():
     
     conn = connect(
         s3_staging_dir=os.environ.get("S3_STAGING_DIR"),
-        aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
-        aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
-        aws_session_token=os.environ.get("AWS_SESSION_TOKEN"),
+        aws_access_key_id=os.environ.get("aws_access_key_id"),
+        aws_secret_access_key=os.environ.get("aws_secret_access_key"),
+        aws_session_token=os.environ.get("aws_session_token"),
         region_name=os.environ.get("AWS_REGION"),
         schema_name=os.environ.get("ATHENA_SCHEMA_NAME"),
     )
@@ -131,9 +131,9 @@ def validate_token_api():
                 sns = boto3.client(
                     'sns',
                     region_name='us-east-1',  # atau region SNS kamu
-                    aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
-                    aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
-                    aws_session_token=os.environ.get("AWS_SESSION_TOKEN")
+                    aws_access_key_id=os.environ.get("aws_access_key_id"),
+                    aws_secret_access_key=os.environ.get("aws_secret_access_key"),
+                    aws_session_token=os.environ.get("aws_session_token")
                 )
 
                 topic_arn = os.environ.get("SNS_TOPIC_ARN")

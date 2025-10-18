@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "techno_db" {
-  name           = "techno-dynamodb"
+  name           = "Tokens"
   billing_mode   = "PROVISIONED"
   read_capacity  = 20
   write_capacity = 20
@@ -11,7 +11,7 @@ resource "aws_dynamodb_table" "techno_db" {
   }
 
   tags = {
-    Name        = "techno_db"
+    Name        = "Tokens"
   }
 }
 
