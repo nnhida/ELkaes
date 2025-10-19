@@ -60,3 +60,19 @@ resource "aws_lambda_permission" "allow_s3_invoke" {
   source_arn    = aws_s3_bucket.technoinput_hida.arn
 
 }
+
+resource "aws_lambda_permission" "allow_api_gateway_post" {
+  statement_id  = "AllowExecutionFromAPIGatewayPOST"
+  action        = "lambda:InvokeFunction"
+  function_name = "techno-lambda-post"
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.techno_api_hida.execution_arn}/*/POST/${aws_api_gateway_resource.generate_token.path_part}"
+}
+
+resource "aws_lambda_permission" "allow_api_gateway_get" {
+  statement_id  = "AllowExecutionFromAPIGatewayGET"
+  action        = "lambda:InvokeFunction"
+  function_name = "techno-lambda-get"
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.techno_api_hida.execution_arn}/*/GET/${aws_api_gateway_resource.validate_token.path_part}"
+}

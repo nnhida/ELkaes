@@ -54,22 +54,6 @@ resource "aws_api_gateway_integration" "validate_tokenintegration" {
   uri                     = "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:641191776011:function:techno-lambda-get/invocations"
 }
 
-resource "aws_lambda_permission" "allow_api_gateway_post" {
-  statement_id  = "AllowExecutionFromAPIGatewayPOST"
-  action        = "lambda:InvokeFunction"
-  function_name = "techno-lambda-post"
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "arn:aws:execute-api:us-east-1:641191776011:d44qq6u6t0/*/POST/generate-token"
-}
-
-resource "aws_lambda_permission" "allow_api_gateway_get" {
-  statement_id  = "AllowExecutionFromAPIGatewayGET"
-  action        = "lambda:InvokeFunction"
-  function_name = "techno-lambda-get"
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "arn:aws:execute-api:us-east-1:641191776011:d44qq6u6t0/*/GET/validate-token"
-}
-
 resource "aws_api_gateway_deployment" "techno_api_deploy" {
   depends_on = [
     aws_api_gateway_integration.generate_tokenintegration,

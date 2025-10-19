@@ -5,8 +5,8 @@ metadata:
   labels:
     app: techno-eks-app
   annotations:
-    service.beta.kubernetes.io/aws-load-balancer-subnets: "subnet-0c6fb55415310a37c,subnet-02d49d3a925f9a301"
-    service.beta.kubernetes.io/aws-load-balancer-security-groups: "sg-0d8a0f3b2d3f881e5"
+    service.beta.kubernetes.io/aws-load-balancer-subnets: "subnet-086d8c10ce849ed79,subnet-071a104fbcf82d6be"
+    service.beta.kubernetes.io/aws-load-balancer-security-groups: "sg-0b87b989baca30f99"
 spec:
   type: LoadBalancer
   selector:
