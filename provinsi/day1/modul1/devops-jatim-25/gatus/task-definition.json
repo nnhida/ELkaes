@@ -1,92 +1,92 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:us-east-1:827610363504:task-definition/lks-gatus-app:latest",
-  "containerDefinitions": [
-      {
-          "name": "gatus",
-          "image": "827610363504.dkr.ecr.us-east-1.amazonaws.com/lks-gatus:latest",
-          "cpu": 0,
-          "portMappings": [
-              {
-                  "name": "lks-port",
-                  "containerPort": 8080,
-                  "hostPort": 8080,
-                  "protocol": "tcp",
-                  "appProtocol": "http"
-              }
-          ],
-          "essential": true,
-          "environment": [],
-          "mountPoints": [],
-          "volumesFrom": [],
-          "logConfiguration": {
-              "logDriver": "awslogs",
-              "options": {
-                  "awslogs-group": "/ecs/lks/gatus-app",
-                  "mode": "non-blocking",
-                  "awslogs-create-group": "true",
-                  "max-buffer-size": "25m",
-                  "awslogs-region": "us-east-1",
-                  "awslogs-stream-prefix": "ecs"
-              }
-          },
-          "systemControls": []
-      }
-  ],
-  "family": "lks-gatus-app",
-  "taskRoleArn": "arn:aws:iam::827610363504:role/LabRole",
-  "executionRoleArn": "arn:aws:iam::827610363504:role/LabRole",
-  "networkMode": "awsvpc",
-  "revision": 2,
-  "volumes": [],
-  "status": "ACTIVE",
-  "requiresAttributes": [
-      {
-          "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
-      },
-      {
-          "name": "ecs.capability.execution-role-awslogs"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.ecr-auth"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.28"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.task-iam-role"
-      },
-      {
-          "name": "ecs.capability.execution-role-ecr-pull"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-      },
-      {
-          "name": "ecs.capability.task-eni"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
-      }
-  ],
-  "placementConstraints": [],
-  "compatibilities": [
-      "EC2",
-      "FARGATE"
-  ],
-  "requiresCompatibilities": [
-      "FARGATE"
-  ],
-  "cpu": "512",
-  "memory": "1024",
-  "runtimePlatform": {
-      "cpuArchitecture": "X86_64",
-      "operatingSystemFamily": "LINUX"
-  },
-  "registeredAt": "2025-04-23T02:12:26.771Z",
-  "registeredBy": "arn:aws:sts::827610363504:assumed-role/voclabs/user4030288=NURHIDAYAH_AYUNDIDA_-_KOTA_MALANG",
-  "enableFaultInjection": false,
-  "tags": []
+    "compatibilities": [
+        "EC2",
+        "MANAGED_INSTANCES",
+        "FARGATE"
+    ],
+    "containerDefinitions": [
+        {
+            "cpu": 512,
+            "environment": [],
+            "environmentFiles": [],
+            "essential": true,
+            "image": "641191776011.dkr.ecr.us-east-1.amazonaws.com/lks-gatus:latest",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/lks/gatus-app",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "memory": 1024,
+            "mountPoints": [],
+            "name": "lks-gatus-container",
+            "portMappings": [
+                {
+                    "appProtocol": "http",
+                    "containerPort": 8080,
+                    "hostPort": 8080,
+                    "name": "lks-gatus-port",
+                    "protocol": "tcp"
+                }
+            ],
+            "systemControls": [],
+            "ulimits": [],
+            "volumesFrom": []
+        }
+    ],
+    "cpu": "512",
+    "enableFaultInjection": false,
+    "executionRoleArn": "arn:aws:iam::641191776011:role/LabRole",
+    "family": "lks-gatus-app",
+    "memory": "1024",
+    "networkMode": "awsvpc",
+    "placementConstraints": [],
+    "registeredAt": "2025-10-19T18:06:45.031Z",
+    "registeredBy": "arn:aws:sts::641191776011:assumed-role/voclabs/user4260126=129629-26",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "revision": 1,
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "status": "ACTIVE",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:641191776011:task-definition/lks-gatus-app:1",
+    "taskRoleArn": "arn:aws:iam::641191776011:role/LabRole",
+    "volumes": [],
+    "tags": []
 }

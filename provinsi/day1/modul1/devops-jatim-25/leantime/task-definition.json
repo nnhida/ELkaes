@@ -1,86 +1,100 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:us-east-1:827610363504:task-definition/lks-leantime-app:latest",
-  "containerDefinitions": [
-      {
-          "name": "leantime",
-          "image": "leantime/leantime:latest",
-          "cpu": 0,
-          "portMappings": [
-              {
-                  "name": "lks-port",
-                  "containerPort": 8080,
-                  "hostPort": 8080,
-                  "protocol": "tcp",
-                  "appProtocol": "http"
-              }
-          ],
-          "essential": true,
-          "environment": [],
-          "mountPoints": [],
-          "volumesFrom": [],
-          "logConfiguration": {
-              "logDriver": "awslogs",
-              "options": {
-                  "awslogs-group": "/ecs/lks/leantime-app",
-                  "mode": "non-blocking",
-                  "awslogs-create-group": "true",
-                  "max-buffer-size": "25m",
-                  "awslogs-region": "us-east-1",
-                  "awslogs-stream-prefix": "ecs"
-              }
-          },
-          "systemControls": []
-      }
-  ],
-  "family": "lks-leantime-app",
-  "taskRoleArn": "arn:aws:iam::827610363504:role/LabRole",
-  "executionRoleArn": "arn:aws:iam::827610363504:role/LabRole",
-  "networkMode": "awsvpc",
-  "revision": 1,
-  "volumes": [],
-  "status": "ACTIVE",
-  "requiresAttributes": [
-      {
-          "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
-      },
-      {
-          "name": "ecs.capability.execution-role-awslogs"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.28"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.task-iam-role"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-      },
-      {
-          "name": "ecs.capability.task-eni"
-      },
-      {
-          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
-      }
-  ],
-  "placementConstraints": [],
-  "compatibilities": [
-      "EC2",
-      "FARGATE"
-  ],
-  "requiresCompatibilities": [
-      "FARGATE"
-  ],
-  "cpu": "1024",
-  "memory": "2048",
-  "runtimePlatform": {
-      "cpuArchitecture": "X86_64",
-      "operatingSystemFamily": "LINUX"
-  },
-  "registeredAt": "2025-04-23T02:14:47.545Z",
-  "registeredBy": "arn:aws:sts::827610363504:assumed-role/voclabs/user4030288=NURHIDAYAH_AYUNDIDA_-_KOTA_MALANG",
-  "enableFaultInjection": false,
-  "tags": []
+    "family": "lks-leantime-app",
+    "containerDefinitions": [
+        {
+            "name": "lks-leantime",
+            "image": "leantime/leantime:latest",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/lks/leantime-app",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "cpu": 1024,
+            "memory": 2048,
+            "essential": true,
+            "portMappings": [
+                {
+                    "containerPort": 8080,
+                    "hostPort": 8080,
+                    "protocol": "tcp",
+                    "name": "lks-leantime-port"
+                }
+            ],
+            "secrets": [
+                { "name": "LEAN_DB_HOST", "valueFrom": "arn:aws:ssm:us-east-1:641191776011:parameter/lks/db/host" },
+                { "name": "LEAN_DB_USER", "valueFrom": "arn:aws:ssm:us-east-1:641191776011:parameter/lks/db/username" },
+                { "name": "LEAN_DB_PASSWORD", "valueFrom": "arn:aws:ssm:us-east-1:641191776011:parameter/lks/db/host/password" },
+                { "name": "LEAN_DB_DATABASE", "valueFrom": "arn:aws:ssm:us-east-1:641191776011:parameter/lks/db/name" },
+                { "name": "LEAN_DB_PORT", "valueFrom": "arn:aws:ssm:us-east-1:641191776011:parameter/lks/db/port" }
+            ],
+            "mountPoints": [
+                {
+                    "sourceVolume": "lks-volume-public_userfiles",
+                    "containerPath": "/var/www/html/public/userfiles"
+                },
+                {
+                    "sourceVolume": "lks-volume-userfiles",
+                    "containerPath": "/var/www/html/userfiles"
+                },
+                {
+                    "sourceVolume": "lks-volume-plugins",
+                    "containerPath": "/var/www/html/app/Plugins"
+                }
+            ],
+            "systemControls": [],
+            "volumesFrom": []
+        }
+    ],
+    "taskRoleArn": "arn:aws:iam::641191776011:role/LabRole",
+    "executionRoleArn": "arn:aws:iam::641191776011:role/LabRole",
+    "networkMode": "awsvpc",
+    "volumes": [
+        {
+            "name": "lks-volume-public_userfiles",
+            "efsVolumeConfiguration": {
+                "fileSystemId": "fs-0fcd68016f337ce51",
+                "rootDirectory": "/",
+                "transitEncryption": "ENABLED",
+                "authorizationConfig": {
+                    "accessPointId": "fsap-0d474544d42614ccd",
+                    "iam": "DISABLED"
+                }
+            }
+        },
+        {
+            "name": "lks-volume-userfiles",
+            "efsVolumeConfiguration": {
+                "fileSystemId": "fs-0fcd68016f337ce51",
+                "rootDirectory": "/",
+                "transitEncryption": "ENABLED",
+                "authorizationConfig": {
+                    "accessPointId": "fsap-0844923f7b1638f53",
+                    "iam": "DISABLED"
+                }
+            }
+        },
+        {
+            "name": "lks-volume-plugins",
+            "efsVolumeConfiguration": {
+                "fileSystemId": "fs-0fcd68016f337ce51",
+                "rootDirectory": "/",
+                "transitEncryption": "ENABLED",
+                "authorizationConfig": {
+                    "accessPointId": "fsap-0c0de932e60df7ca0",
+                    "iam": "DISABLED"
+                }
+            }
+        }
+    ],
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "1024",
+    "memory": "2048",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    }
 }
