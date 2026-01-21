@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: cf for s3
+
+
+Resources:
+  bucket1:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: lks-kotamalang-hida-25
+      LifecycleConfiguration:
+        Rules:
+          - Id: lks-bucket-rule
+            Status: Enabled
+            ExpirationInDays: 365
+            Transitions:
+              - TransitionInDays: 30
+                StorageClass: DEEP_ARCHIVE
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      Tags:
+        - Key: Name
+          Value: lks-kotamalang-hida-25
+
+
+  policy1:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref bucket1
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action: 's3:GetObject'
+            Effect: Allow
+            Resource: 'arn:aws:s3:::lks-kotamalang-hida-25/*'
+            Principal: '*'
+
+
+  bucket2:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: lks-dockerimage-hida-25
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: Name
+          Value: lks-dockerimage-hida-25
+
+
+  policy2:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref bucket2
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action: 's3:GetObject'
+            Effect: Allow
+            Resource: 'arn:aws:s3:::lks-dockerimage-hida-25/*'
+            Principal: '*'

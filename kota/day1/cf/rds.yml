@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: cf for rds
+
+
+Parameters:
+  subnet1:
+    Description: subnet for rds
+    Type: String
+  subnet2:
+    Description: subnet for rds
+    Type: String
+  SG:
+    Description: SG for rds
+    Type: String
+
+
+Resources:
+  subnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: subnet group for rds
+      DBSubnetGroupName: rds-subnet-group
+      SubnetIds:
+        - !Ref subnet1
+        - !Ref subnet2
+      Tags:
+        - Key: Name
+          Value: lks-rds-subnets
+
+
+  RDS:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: 20
+      AutoMinorVersionUpgrade: false
+      DBInstanceClass: db.t3.micro
+      DBInstanceIdentifier: LKS-RDS-Apps
+      DBName: techno_rds
+      DBSubnetGroupName: !Ref subnetGroup
+      DeletionProtection: false
+      Engine: mariadb
+      EngineVersion: 11.4.4
+      MasterUsername: admin
+      MasterUserPassword: Technobrain2025!
+      MaxAllocatedStorage: 50
+      MultiAZ: false
+      NetworkType: IPV4
+      Port: 3306
+      PubliclyAccessible: false
+      StorageType: gp2
+      Tags:
+        - Key: Name
+          Value: LKS-RDS-Apps
+      VPCSecurityGroups:
+        - !Ref SG

@@ -1,0 +1,256 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: cf for networking and security
+
+
+Resources:
+# vpc and ipv6 cidr
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 20.2.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: lks-kota-malang
+
+
+  vpcIPv6CIDR:
+    Type: AWS::EC2::VPCCidrBlock
+    Properties:
+      AmazonProvidedIpv6CidrBlock: true
+      VpcId: !Ref VPC
+
+
+#subnets
+  publicsubnetAZa:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1a
+      CidrBlock: 20.2.0.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: lks-public-az-a
+      VpcId: !Ref VPC
+
+
+  publicsubnetAZb:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1b
+      CidrBlock: 20.2.1.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: lks-public-az-b
+      VpcId: !Ref VPC
+
+
+  privatesubnetAZa:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1a
+      CidrBlock: 20.2.2.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: lks-private-az-a
+      VpcId: !Ref VPC
+
+
+  privatesubnetAZb:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1b
+      CidrBlock: 20.2.3.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: lks-private-az-b
+      VpcId: !Ref VPC
+
+
+# route table
+  publicRTB:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags:
+        - Key: Name
+          Value: lks-public-rtb
+      VpcId: !Ref VPC
+
+
+  privateRTB:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags:
+        - Key: Name
+          Value: lks-private-rtb
+      VpcId: !Ref VPC
+
+
+# igw, route, and public subnet association
+  IGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: lks-igw
+
+
+  igwAttach:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref IGW
+      VpcId: !Ref VPC
+
+
+  publicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref IGW
+      RouteTableId: !Ref publicRTB
+
+
+  publicAssAzA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref publicRTB
+      SubnetId: !Ref publicsubnetAZa
+
+
+  publicAssAzB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref publicRTB
+      SubnetId: !Ref publicsubnetAZb
+
+
+# nat instance, route, and private subnet association
+  natSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: sg for nat instance
+      GroupName: lks-nat-sg
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: icmp
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: lks-nat-sg
+      VpcId: !Ref VPC
+
+
+  natInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0015c0130d6cc5da7
+      InstanceType: t2.micro
+      SecurityGroupIds:
+        - !Ref natSG
+      SourceDestCheck: false
+      SubnetId: !Ref publicsubnetAZa
+      Tags:
+        - Key: Name
+          Value: lks-nat-instance
+ 
+  privateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      InstanceId: !Ref natInstance
+      RouteTableId: !Ref privateRTB
+
+
+  privateAssAzA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref privateRTB
+      SubnetId: !Ref privatesubnetAZa
+
+
+  privateAssAzB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref privateRTB
+      SubnetId: !Ref privatesubnetAZb
+
+
+# security group
+  lbSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: sg for lb
+      GroupName: SG-LB
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: SG-LB
+      VpcId: !Ref VPC
+
+
+  appsSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: sg for apps
+      GroupName: SG-Apps
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 2049
+          ToPort: 2049
+          CidrIp: 20.2.2.0/24
+        - IpProtocol: tcp
+          FromPort: 2049
+          ToPort: 2049
+          CidrIp: 20.2.3.0/24
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 20.2.2.0/24
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 20.2.3.0/24
+        - IpProtocol: tcp
+          FromPort: 5000
+          ToPort: 5000
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: SG-Apps
+      VpcId: !Ref VPC
