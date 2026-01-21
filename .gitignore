@@ -1,5 +1,4 @@
 *.pdf
-kota/*.pdf
 node_modules/
 .terraform/
 .terraform.lock.hcl
